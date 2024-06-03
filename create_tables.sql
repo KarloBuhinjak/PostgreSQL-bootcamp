@@ -1,38 +1,82 @@
--- Unos podataka u tabelu "Customer"
-INSERT INTO "Customer" ("Id","Name", "Email", "Phonenumber", "Password")
-VALUES (1, 'John Doe', 'john@example.com', '123456789', 'password123');
+CREATE TABLE "Customer" (
+  "Id" SERIAL PRIMARY KEY,
+  "Name" VARCHAR(255),
+  "Email" VARCHAR(255),
+  "Phonenumber" VARCHAR(20),
+  "Password" VARCHAR(255)
+);
 
--- Unos podataka u tabelu "Payment" sa ručno definisanim ID-jevima
-INSERT INTO "Payment" ("Id", "TotalPrice", "PaymentDate")
-VALUES (1, 100.00, '2024-06-01');
+CREATE TABLE "Payment" (
+  "Id" SERIAL PRIMARY KEY,
+  "TotalPrice" NUMERIC(10, 2),
+  "PaymentDate" DATE,
+);
 
--- Unos podataka u tabelu "Show" sa ručno definisanim ID-jevima
-INSERT INTO "Show" ("Id", "Title", "Description", "ShowDateTime")
-VALUES (1, 'The Lion King', 'Musical based on Disney movie', '2024-06-01 19:00:00');
+CREATE TABLE "Ticket" (
+  "Id" SERIAL PRIMARY KEY,
+  "Price" DECIMAL(10, 2),
+  "CustomerId" INT,
+  "PaymentId" INT,
+  "ShowId" INT,
+  "SeatId" INT,
+  CONSTRAINT FK_Ticket_Customer_CustomerId FOREIGN KEY ("CustomerId") REFERENCES "Customer" ("Id"),
+  CONSTRAINT FK_Ticket_Payment_PaymentId FOREIGN KEY ("PaymentId") REFERENCES "Payment" ("Id"),
+  CONSTRAINT FK_Ticket_Show_ShowId FOREIGN KEY ("ShowId") REFERENCES "Show" ("Id"),
+  CONSTRAINT FK_Ticket_Seat_SeatId FOREIGN KEY ("SeatId") REFERENCES "Seat" ("Id")
+);
 
--- Unos podataka u tabelu "Theater" sa ručno definisanim ID-jevima
-INSERT INTO "Theater" ("Id", "Name", "Address", "PhoneNumber")
-VALUES (1, 'Broadway Theater', '123 Broadway St', '555-1234');
 
--- Unos podataka u tabelu "Actor" sa ručno definisanim ID-jevima
-INSERT INTO "Actor" ("Id", "Name")
-VALUES (1, 'Johnny Depp');
+CREATE TABLE "Seat" (
+  "Id" SERIAL PRIMARY KEY,
+  "SeatNumber" INT,
+  "ShowTheaterId" INT,
+  CONSTRAINT FK_Seat_ShowTheater_ShowTheaterId FOREIGN KEY ("ShowTheaterId") REFERENCES "ShowTheater" ("Id")
+);
 
--- Unos podataka u tabelu "ShowTheater" sa ručno definisanim ID-jevima
-INSERT INTO "ShowTheater" ("Id", "ShowId", "TheaterId")
-VALUES (1, 1, 1);
+CREATE TABLE "Show" (
+  "Id" SERIAL PRIMARY KEY,
+  "Title" VARCHAR(255),
+  "Description" VARCHAR(255),
+  "ShowDateTime" TIMESTAMP
+);
 
--- Unos podataka u tabelu "ShowActor" sa ručno definisanim ID-jevima
-INSERT INTO "ShowActor" ("Id", "ShowId", "ActorId")
-VALUES (1, 1, 1);
+CREATE TABLE "ShowTheater" (
+  "Id" SERIAL PRIMARY KEY,
+  "ShowId" INT,
+  "TheaterId" INT,
+  CONSTRAINT FK_ShowTheater_Show_ShowId FOREIGN KEY ("ShowId") REFERENCES "Show" ("Id"),
+  CONSTRAINT FK_ShowTheater_Theater_TheaterId FOREIGN KEY ("TheaterId") REFERENCES "Theater" ("Id")
+);
 
--- Unos podataka u tabelu "Seat" sa ručno definisanim ID-jevima
-INSERT INTO "Seat" ("Id", "SeatNumber", "ShowTheaterId")
-VALUES (1, 1, 1),
-       (2, 2, 1),
-       (3, 3, 1);
+CREATE TABLE "Theater" (
+  "Id" SERIAL PRIMARY KEY,
+  "Name" VARCHAR(255),
+  "Address" VARCHAR(255),
+  "PhoneNumber" VARCHAR(20)
+);
 
--- Unos podataka u tabelu "TheaterActor" sa ručno definisanim ID-jevima
-INSERT INTO "TheaterActor" ("Id", "TheaterId", "ActorId")
-VALUES (1, 1, 1);
+CREATE TABLE "Actor" (
+  "Id" SERIAL PRIMARY KEY,
+  "Name" VARCHAR(255)
+);
+
+CREATE TABLE "ShowActor" (
+  "Id" SERIAL PRIMARY KEY,
+  "ShowId" INT,
+  "ActorId" INT,
+  CONSTRAINT FK_ShowActor_Show_ShowId FOREIGN KEY ("ShowId") REFERENCES "Show" ("Id"),
+  CONSTRAINT FK_ShowActor_Actor_ActorId FOREIGN KEY ("ActorId") REFERENCES "Actor" ("Id")
+);
+
+CREATE TABLE "TheaterActor" (
+  "Id" SERIAL PRIMARY KEY,
+  "TheaterId" INT,
+  "ActorId" INT,
+  CONSTRAINT FK_TheaterActor_Theater_TheaterId FOREIGN KEY ("TheaterId") REFERENCES "Theater" ("Id"),
+  CONSTRAINT FK_TheaterActor_Actor_ActorId FOREIGN KEY ("ActorId") REFERENCES "Actor" ("Id")
+);
+
+
+
+
 
